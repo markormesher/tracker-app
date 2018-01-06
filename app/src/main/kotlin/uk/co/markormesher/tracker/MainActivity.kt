@@ -11,7 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.main_activity.*
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,14 +21,14 @@ import org.jetbrains.anko.uiThread
 import uk.co.markormesher.tracker.db.Database
 import uk.co.markormesher.tracker.helpers.checkPermissionList
 import uk.co.markormesher.tracker.helpers.checkPermissionRequestResult
-import uk.co.markormesher.tracker.helpers.createActivityChooser
 import uk.co.markormesher.tracker.helpers.requestPermissionList
 import uk.co.markormesher.tracker.models.LogEntry
+import uk.co.markormesher.tracker.models.LogEntryMeta
 import java.io.File
 
 class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 
-	private val REQUIRED_PERMISSIONS = arrayOf(
+	private val requiredPermissions = arrayOf(
 			Manifest.permission.WRITE_EXTERNAL_STORAGE,
 			Manifest.permission.INTERNET
 	)
@@ -46,14 +46,14 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 		super.onCreate(savedInstanceState)
 		initView()
 
-		if (!checkPermissionList(REQUIRED_PERMISSIONS)) {
-			requestPermissionList(REQUIRED_PERMISSIONS)
+		if (!checkPermissionList(requiredPermissions)) {
+			requestPermissionList(requiredPermissions)
 		}
 	}
 
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
 		if (!checkPermissionRequestResult(requestCode, grantResults)) {
-			requestPermissionList(REQUIRED_PERMISSIONS, true)
+			requestPermissionList(requiredPermissions, true)
 		}
 	}
 
@@ -63,7 +63,7 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	}
 
 	private fun initView() {
-		setContentView(R.layout.activity_main)
+		setContentView(R.layout.main_activity)
 
 		val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 		listView.layoutManager = layoutManager
@@ -119,7 +119,7 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	}
 
 	override fun onSwitchBtnClick() {
-		switchActivity()
+		startActivity(Intent(this, LogEntryTitleChooserActivity::class.java))
 	}
 
 	private fun reloadLogEntries() {
@@ -149,17 +149,9 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	private fun editLogEntry(logEntry: LogEntry?) {
 		val intent = Intent(this, EditLogEntryActivity::class.java)
 		if (logEntry != null) {
-			intent.putExtra("log_entry", logEntry)
+			intent.putExtra(LogEntryMeta.ENTITY_NAME, logEntry)
 		}
 		startActivity(intent)
-	}
-
-	private fun switchActivity() {
-		createActivityChooser(this, { activity ->
-			if (activity != null) {
-				Database.getInstance(this).saveLogEntry(LogEntry(title = activity), { reloadLogEntries() })
-			}
-		})
 	}
 
 	private fun startDataExport() {
@@ -169,7 +161,7 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 				val shareIntent = Intent()
 				shareIntent.action = Intent.ACTION_SEND
 				shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(path)))
-				shareIntent.type = "text/csv"
+				shareIntent.type = "application/json"
 				startActivity(Intent.createChooser(shareIntent, getString(R.string.export_data_share)))
 			} else {
 				Toast.makeText(this, getString(R.string.export_data_failed), Toast.LENGTH_SHORT).show()

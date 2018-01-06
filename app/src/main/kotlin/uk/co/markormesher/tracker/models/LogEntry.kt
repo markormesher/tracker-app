@@ -8,6 +8,7 @@ import org.joda.time.DateTime
 import java.util.*
 
 object LogEntryMeta {
+	val ENTITY_NAME = "log_entry"
 	val TABLE_NAME = "log_entries"
 	val ID = "id"
 	val TITLE = "title"

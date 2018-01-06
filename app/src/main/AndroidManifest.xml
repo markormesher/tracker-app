@@ -24,8 +24,8 @@
 		<activity android:name=".EditLogEntryActivity"/>
 
 		<activity
-				android:name=".NewLogEntryThinActivity"
-				android:theme="@style/AppTheme.Invisible"
+				android:name=".LogEntryTitleChooserActivity"
+				android:theme="@style/AppTheme.Dialog"
 				/>
 
 		<receiver android:name=".widget.WidgetProvider">

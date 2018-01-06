@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.list_item_log_entry.view.*
+import kotlinx.android.synthetic.main.log_entry_list_item.view.*
 import org.joda.time.DateTime
 import org.joda.time.Period
 import org.joda.time.format.DateTimeFormat
@@ -32,7 +32,7 @@ class LogEntryListAdapter(private val context: Context, private val eventListene
 	override fun getItemCount() = logEntries.size
 
 	override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): LogEntryListAdapter.ViewHolder {
-		return ViewHolder(layoutInflater.inflate(R.layout.list_item_log_entry, parent, false))
+		return ViewHolder(layoutInflater.inflate(R.layout.log_entry_list_item, parent, false))
 	}
 
 	override fun onBindViewHolder(holder: LogEntryListAdapter.ViewHolder, position: Int) {

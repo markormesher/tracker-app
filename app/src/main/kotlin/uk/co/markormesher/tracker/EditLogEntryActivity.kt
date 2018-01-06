@@ -1,17 +1,19 @@
 package uk.co.markormesher.tracker
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_edit.*
+import kotlinx.android.synthetic.main.edit_log_entry_activity.*
 import org.joda.time.DateTime
 import uk.co.markormesher.tracker.db.Database
-import uk.co.markormesher.tracker.helpers.createActivityChooser
 import uk.co.markormesher.tracker.models.LogEntry
+import uk.co.markormesher.tracker.models.LogEntryMeta
 
 class EditLogEntryActivity: AppCompatActivity() {
 
@@ -24,16 +26,18 @@ class EditLogEntryActivity: AppCompatActivity() {
 	private var startEditHour = 0
 	private var startEditMinute = 0
 
+	private val titleChooserResultCode = 4957
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		currentEntry = intent?.extras?.getParcelable("log_entry") ?: LogEntry()
-		newEntry = !(intent?.extras?.containsKey("log_entry") ?: false)
+		currentEntry = intent?.extras?.getParcelable(LogEntryMeta.ENTITY_NAME) ?: LogEntry()
+		newEntry = !(intent?.extras?.containsKey(LogEntryMeta.ENTITY_NAME) ?: false)
 		initView()
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		if (newEntry) {
-			menuInflater.inflate(R.menu.create_log_entry, menu)
+			menuInflater.inflate(R.menu.edit_log_entry_no_delete, menu)
 		} else {
 			menuInflater.inflate(R.menu.edit_log_entry, menu)
 		}
@@ -49,8 +53,18 @@ class EditLogEntryActivity: AppCompatActivity() {
 		return super.onOptionsItemSelected(item)
 	}
 
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		if (requestCode == titleChooserResultCode && resultCode == Activity.RESULT_OK) {
+			if (data?.getStringExtra(LogEntryMeta.TITLE)?.isBlank() == false) {
+				titleEdit.setText(data.getStringExtra(LogEntryMeta.TITLE))
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data)
+		}
+	}
+
 	private fun initView() {
-		setContentView(R.layout.activity_edit)
+		setContentView(R.layout.edit_log_entry_activity)
 
 		titleEdit.setText(currentEntry.title)
 		startEditYear = currentEntry.startTime.year
@@ -80,11 +94,9 @@ class EditLogEntryActivity: AppCompatActivity() {
 		}
 
 		quickInputBtn.setOnClickListener {
-			createActivityChooser(this, { activity ->
-				if (activity != null) {
-					titleEdit.setText(activity)
-				}
-			})
+			val intent = Intent(this@EditLogEntryActivity, LogEntryTitleChooserActivity::class.java)
+			intent.putExtra(LogEntryTitleChooserActivity.FOR_RESULT, true)
+			startActivityForResult(intent, titleChooserResultCode)
 		}
 	}
 

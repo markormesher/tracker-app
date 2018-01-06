@@ -6,10 +6,11 @@
 		<item name="colorAccent">@color/primaryLightColor</item>
 	</style>
 
-	<style name="AppTheme.Invisible" parent="Theme.AppCompat.Light.NoActionBar">
-		<item name="android:windowBackground">@android:color/transparent</item>
-		<item name="android:colorBackgroundCacheHint">@null</item>
-		<item name="android:windowIsTranslucent">true</item>
+	<style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+		<item name="windowNoTitle">true</item>
+		<item name="colorPrimary">@color/primaryColor</item>
+		<item name="colorPrimaryDark">@color/primaryDarkColor</item>
+		<item name="colorAccent">@color/primaryLightColor</item>
 	</style>
 
 </resources>
