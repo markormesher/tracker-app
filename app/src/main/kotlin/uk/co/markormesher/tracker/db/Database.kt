@@ -126,23 +126,33 @@ class Database private constructor(private val context: Context):
 				}
 			}
 
+			output.append("[")
+
 			entries.forEach { logEntry ->
 				with(logEntry) {
-					if (title.contains(",")) {
-						title = "\"$title\""
-					}
+					title = title.replace("\"", "\\\"")
+					note = note?.replace("\"", "\\\"")
 					if (endTime == null) {
 						endTime = DateTime.now()
 					}
-					output.append("$id,$title,$startTime,$endTime\n")
+					output.append("{" +
+							"\"id\": \"$id\"," +
+							"\"title\": \"$title\"," +
+							"\"note\": ${if (note.isNullOrBlank()) "null" else "\"$note\""}," +
+							"\"startTime\": \"$startTime\"," +
+							"\"endTime\": \"$endTime\"" +
+							"},")
 				}
 			}
 
+			output.setLength(output.length - 1)
+			output.append("]")
+
 			try {
-				val timestamp = DateTime.now().toString(ISODateTimeFormat.ordinalDateTimeNoMillis())
+				val timestamp = DateTime.now().toString(ISODateTimeFormat.dateTimeNoMillis())
 				val folder = File(Environment.getExternalStorageDirectory().absolutePath, "/Tracker/")
 				if (folder.exists() || folder.mkdirs()) {
-					val file = File(folder, "tracker-output-$timestamp.csv")
+					val file = File(folder, "tracker-output-$timestamp.json")
 					file.writeText(output.toString())
 					uiThread { callback?.invoke(file.absolutePath) }
 				} else {
