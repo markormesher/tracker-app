@@ -24,7 +24,7 @@
 		<activity android:name=".EditLogEntryActivity"/>
 
 		<activity
-				android:name=".LogEntryTitleChooserActivity"
+				android:name=".LogEntryQuickChooserDialog"
 				android:theme="@style/AppTheme.Dialog"
 				/>
 
@@ -35,7 +35,7 @@
 
 			<meta-data
 					android:name="android.appwidget.provider"
-					android:resource="@xml/widget"/>
+					android:resource="@xml/widget_provider"/>
 		</receiver>
 
 	</application>

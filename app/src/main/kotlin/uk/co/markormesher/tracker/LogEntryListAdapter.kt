@@ -20,12 +20,8 @@ class LogEntryListAdapter(private val context: Context, private val eventListene
 
 	private val now = DateTime.now()
 	private val durationFormat = PeriodFormat.wordBased()
-	private val sameDayDateFormat by lazy {
-		DateTimeFormat.forPattern(context.getString(R.string.same_day_joda_time_format))
-	}
-	private val differentDayDateFormat by lazy {
-		DateTimeFormat.forPattern(context.getString(R.string.different_day_joda_time_format))
-	}
+	private val sameDayDateFormat by lazy { DateTimeFormat.forPattern(context.getString(R.string.same_day_joda_time_format)) }
+	private val differentDayDateFormat by lazy { DateTimeFormat.forPattern(context.getString(R.string.different_day_joda_time_format)) }
 
 	val logEntries = ArrayList<LogEntry>()
 
@@ -53,9 +49,9 @@ class LogEntryListAdapter(private val context: Context, private val eventListene
 			holder.switchBtn.setOnClickListener { eventListener?.onSwitchBtnClick() }
 
 			if (logEntry.startTime.year == now.year && logEntry.startTime.dayOfYear == now.dayOfYear) {
-				holder.startTimeView.text = context.getString(R.string.log_entry_start_time, logEntry.startTime.toString(sameDayDateFormat))
+				holder.durationView.text = context.getString(R.string.log_entry_start_time, logEntry.startTime.toString(sameDayDateFormat))
 			} else {
-				holder.startTimeView.text = context.getString(R.string.log_entry_start_time, logEntry.startTime.toString(differentDayDateFormat))
+				holder.durationView.text = context.getString(R.string.log_entry_start_time, logEntry.startTime.toString(differentDayDateFormat))
 			}
 		} else {
 			holder.currentActivityLabel.visibility = View.GONE
@@ -63,7 +59,7 @@ class LogEntryListAdapter(private val context: Context, private val eventListene
 			holder.switchBtn.setOnClickListener(null)
 
 			val duration = Period(logEntry.startTime, logEntry.endTime).withSeconds(0).withMillis(0)
-			holder.startTimeView.text = duration.toString(durationFormat)
+			holder.durationView.text = duration.toString(durationFormat)
 		}
 
 		holder.rootView.setOnLongClickListener {
@@ -79,10 +75,10 @@ class LogEntryListAdapter(private val context: Context, private val eventListene
 	class ViewHolder(v: View): RecyclerView.ViewHolder(v) {
 		val rootView = v
 		val currentActivityLabel = v.currentActivityLabel!!
-		val iconView = v.icon!!
-		val titleView = v.title!!
-		val noteView = v.note!!
-		val startTimeView = v.startTime!!
+		val iconView = v.iconView!!
+		val titleView = v.titleView!!
+		val noteView = v.noteView!!
+		val durationView = v.durationView!!
 		val switchBtn = v.switchBtn!!
 	}
 

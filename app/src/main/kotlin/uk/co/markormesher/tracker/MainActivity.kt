@@ -21,6 +21,7 @@ import org.jetbrains.anko.uiThread
 import uk.co.markormesher.tracker.db.Database
 import uk.co.markormesher.tracker.helpers.checkPermissionList
 import uk.co.markormesher.tracker.helpers.checkPermissionRequestResult
+import uk.co.markormesher.tracker.helpers.consume
 import uk.co.markormesher.tracker.helpers.requestPermissionList
 import uk.co.markormesher.tracker.models.LogEntry
 import uk.co.markormesher.tracker.models.LogEntryMeta
@@ -33,14 +34,13 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 			Manifest.permission.INTERNET
 	)
 
+	private val httpClient by lazy { OkHttpClient() }
 	private val listAdapter by lazy { LogEntryListAdapter(this, this) }
 	private var viewState = ViewState.EMPTY
 		set(value) {
 			field = value
 			updateView()
 		}
-
-	private val httpClient by lazy { OkHttpClient() }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -65,30 +65,29 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	private fun initView() {
 		setContentView(R.layout.main_activity)
 
-		val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-		listView.layoutManager = layoutManager
-		listView.addItemDecoration(DividerItemDecoration(listView.context, layoutManager.orientation))
-		listView.adapter = listAdapter
+		logEntryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+		logEntryRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+		logEntryRecyclerView.adapter = listAdapter
 
-		fab.setOnClickListener { editLogEntry(null) }
+		fabView.setOnClickListener { editLogEntry(null) }
 
 		viewState = ViewState.EMPTY
 	}
 
 	private fun updateView() {
-		loadingSpinner.visibility = if (viewState == ViewState.LOADING) {
+		loadingSpinnerView.visibility = if (viewState == ViewState.LOADING) {
 			View.VISIBLE
 		} else {
 			View.GONE
 		}
 
-		listView.visibility = if (viewState == ViewState.LOADED) {
+		logEntryRecyclerView.visibility = if (viewState == ViewState.LOADED) {
 			View.VISIBLE
 		} else {
 			View.GONE
 		}
 
-		emptyMessage.visibility = if (viewState == ViewState.EMPTY) {
+		emptyMessageView.visibility = if (viewState == ViewState.EMPTY) {
 			View.VISIBLE
 		} else {
 			View.GONE
@@ -100,18 +99,10 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 		return true
 	}
 
-	override fun onOptionsItemSelected(item: MenuItem): Boolean {
-		when (item.itemId) {
-			R.id.exportData -> {
-				startDataExport()
-				return true
-			}
-			R.id.syncData -> {
-				startDataSync()
-				return true
-			}
-		}
-		return super.onOptionsItemSelected(item)
+	override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+		R.id.exportData -> consume { dataExport() }
+		R.id.syncData -> consume { dataSync() }
+		else -> super.onOptionsItemSelected(item)
 	}
 
 	override fun onLogEntryLongClick(logEntry: LogEntry) {
@@ -119,29 +110,26 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	}
 
 	override fun onSwitchBtnClick() {
-		startActivity(Intent(this, LogEntryTitleChooserActivity::class.java))
+		startActivity(Intent(this, LogEntryQuickChooserDialog::class.java))
 	}
 
 	private fun reloadLogEntries() {
-		if (viewState != ViewState.LOADING) {
-			viewState = ViewState.LOADING
-			Database.getInstance(this).getSortedLogEntries { entries ->
-				with(listAdapter) {
-					entries.forEachIndexed { index, logEntry ->
-						if (index > 0) {
-							logEntry.endTime = entries[index - 1].startTime
-						}
-					}
-					logEntries.clear()
-					logEntries.addAll(entries)
-					notifyDataSetChanged()
-				}
+		if (viewState == ViewState.LOADING) {
+			return
+		}
 
-				viewState = if (entries.isEmpty()) {
-					ViewState.EMPTY
-				} else {
-					ViewState.LOADED
-				}
+		viewState = ViewState.LOADING
+		Database.getInstance(this).getSortedLogEntries { entries ->
+			with(listAdapter) {
+				logEntries.clear()
+				logEntries.addAll(entries)
+				notifyDataSetChanged()
+			}
+
+			viewState = if (entries.isEmpty()) {
+				ViewState.EMPTY
+			} else {
+				ViewState.LOADED
 			}
 		}
 	}
@@ -154,7 +142,7 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 		startActivity(intent)
 	}
 
-	private fun startDataExport() {
+	private fun dataExport() {
 		Toast.makeText(this, R.string.export_data_in_progress, Toast.LENGTH_SHORT).show()
 		Database.getInstance(this).prepareExportDataAsFile({ path ->
 			if (path != null) {
@@ -169,7 +157,7 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 		})
 	}
 
-	private fun startDataSync() {
+	private fun dataSync() {
 		Toast.makeText(this, R.string.sync_data_in_progress, Toast.LENGTH_SHORT).show()
 		Database.getInstance(this).prepareExportData({ data ->
 			doAsync {

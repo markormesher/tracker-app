@@ -34,7 +34,8 @@ data class LogEntry(
 			parcel.readString(),
 			parcel.readString(),
 			parcel.readString(),
-			DateTime(parcel.readLong()))
+			DateTime(parcel.readLong())
+	)
 
 	var endTime: DateTime? = null
 
@@ -59,13 +60,8 @@ data class LogEntry(
 	}
 
 	companion object CREATOR: Parcelable.Creator<LogEntry> {
-		override fun createFromParcel(parcel: Parcel): LogEntry {
-			return LogEntry(parcel)
-		}
-
-		override fun newArray(size: Int): Array<LogEntry?> {
-			return arrayOfNulls(size)
-		}
+		override fun createFromParcel(parcel: Parcel): LogEntry = LogEntry(parcel)
+		override fun newArray(size: Int): Array<LogEntry?> = arrayOfNulls(size)
 	}
 
 }

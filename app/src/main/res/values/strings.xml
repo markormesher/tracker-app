@@ -24,16 +24,16 @@
 
 	<string name="no_log_entries">No log entries yet</string>
 	<string name="log_entry_start_time">Since %s</string>
-	<string name="log_entry_current_activity">Right now:</string>
-	<string name="log_entry_switch_btn">Switch activity</string>
+	<string name="log_entry_current_label">Right now:</string>
+	<string name="log_entry_switch_btn">Switch</string>
 
-	<string name="log_entry_edit_activity_title">Activity:</string>
-	<string name="log_entry_edit_activity_hint">e.g. Sleeping</string>
-	<string name="log_entry_edit_activity_btn">Suggestions</string>
+	<string name="log_entry_edit_title">Title:</string>
+	<string name="log_entry_edit_title_hint">e.g. Sleeping</string>
+	<string name="log_entry_edit_title_btn">Suggestions</string>
 
-	<string name="log_entry_edit_start_time_title">Since:</string>
-	<string name="log_entry_edit_date_hint">Date</string>
-	<string name="log_entry_edit_time_hint">Time</string>
+	<string name="log_entry_edit_start_title">Since:</string>
+	<string name="log_entry_edit_start_date_hint">Date</string>
+	<string name="log_entry_edit_start_time_hint">Time</string>
 
 	<string name="log_entry_edit_note_title">Notes:</string>
 	<string name="log_entry_edit_note_hint">Optional</string>
@@ -41,8 +41,8 @@
 	<string name="same_day_joda_time_format">HH:mm</string>
 	<string name="different_day_joda_time_format">yyyy-MM-dd HH:mm</string>
 
-	<string name="date_entry_format">%1$04d-%2$02d-%3$02d</string>
-	<string name="time_entry_format">%1$02d:%2$02d</string>
+	<string name="date_entry_joda_format">yyyy-MM-dd</string>
+	<string name="time_entry_joda_format">HH:mm</string>
 
 	<string name="delete_confirm_title">Are You Sure?</string>
 	<string name="delete_confirm_body">Are you sure you want to delete this log entry?</string>

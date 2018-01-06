@@ -4,6 +4,8 @@
 	<dimen name="activity_padding_horizontal">10dp</dimen>
 	<dimen name="activity_padding_vertical">6dp</dimen>
 
+	<dimen name="list_item_padding_vertical">6dp</dimen>
+
 	<dimen name="widget_text_padding">6dp</dimen>
 	<dimen name="widget_button_padding">16dp</dimen>
 

@@ -9,14 +9,14 @@
 		>
 
 	<ProgressBar
-			android:id="@+id/loadingSpinner"
+			android:id="@+id/loadingSpinnerView"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerInParent="true"
 			/>
 
 	<TextView
-			android:id="@+id/emptyMessage"
+			android:id="@+id/emptyMessageView"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerInParent="true"
@@ -24,13 +24,13 @@
 			/>
 
 	<android.support.v7.widget.RecyclerView
-			android:id="@+id/listView"
+			android:id="@+id/logEntryRecyclerView"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			/>
 
 	<uk.co.markormesher.android_fab.FloatingActionButton
-			android:id="@+id/fab"
+			android:id="@+id/fabView"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			app:buttonIcon="@drawable/ic_add_white_24dp"

@@ -9,7 +9,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import uk.co.markormesher.tracker.R
 
-private val PERMISSION_REQUEST_CODE = 1415
+private val permissionRequestCode = 1415
 
 private fun shouldUseRuntimePermissions(): Boolean {
 	return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
@@ -42,11 +42,11 @@ fun Activity.requestPermissionList(permissions: Array<String>, reRequest: Boolea
 }
 
 private fun Activity.doRequestPermissionList(permissions: Array<String>) {
-	ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE)
+	ActivityCompat.requestPermissions(this, permissions, permissionRequestCode)
 }
 
 fun checkPermissionRequestResult(requestCode: Int, grantResults: IntArray): Boolean {
-	if (requestCode != PERMISSION_REQUEST_CODE) return false
+	if (requestCode != permissionRequestCode) return false
 	if (grantResults.isEmpty()) return false
 	return grantResults.none { it != PackageManager.PERMISSION_GRANTED }
 }

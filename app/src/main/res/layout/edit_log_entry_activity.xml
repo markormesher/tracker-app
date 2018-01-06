@@ -15,7 +15,7 @@
 	<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/log_entry_edit_activity_title"
+			android:text="@string/log_entry_edit_title"
 			style="@style/TextAppearance.AppCompat"
 			/>
 
@@ -30,7 +30,7 @@
 				android:layout_height="wrap_content"
 				android:layout_alignParentStart="true"
 				android:layout_toStartOf="@+id/quickInputBtn"
-				android:hint="@string/log_entry_edit_activity_hint"
+				android:hint="@string/log_entry_edit_title_hint"
 				/>
 
 		<ImageView
@@ -44,7 +44,7 @@
 				android:tint="#000000"
 				android:alpha="0.6"
 				android:background="?android:attr/selectableItemBackground"
-				android:contentDescription="@string/log_entry_edit_activity_btn"
+				android:contentDescription="@string/log_entry_edit_title_btn"
 				/>
 
 	</RelativeLayout>
@@ -53,7 +53,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="@dimen/form_spacing"
-			android:text="@string/log_entry_edit_start_time_title"
+			android:text="@string/log_entry_edit_start_title"
 			style="@style/TextAppearance.AppCompat"
 			/>
 
@@ -65,25 +65,25 @@
 			>
 
 		<EditText
-				android:id="@+id/startDate"
+				android:id="@+id/startDateEdit"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:inputType="date"
 				android:focusable="false"
 				android:gravity="center"
-				android:hint="@string/log_entry_edit_date_hint"
+				android:hint="@string/log_entry_edit_start_date_hint"
 				/>
 
 		<EditText
-				android:id="@+id/startTime"
+				android:id="@+id/startTimeEdit"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:inputType="time"
 				android:focusable="false"
 				android:gravity="center"
-				android:hint="@string/log_entry_edit_time_hint"
+				android:hint="@string/log_entry_edit_start_time_hint"
 				/>
 
 	</LinearLayout>

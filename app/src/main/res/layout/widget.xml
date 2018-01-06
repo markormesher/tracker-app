@@ -24,7 +24,7 @@
 				android:layout_height="wrap_content"
 				android:textStyle="bold"
 				style="@style/TextAppearance.AppCompat"
-				android:text="@string/log_entry_current_activity"
+				android:text="@string/log_entry_current_label"
 				/>
 
 		<TextView

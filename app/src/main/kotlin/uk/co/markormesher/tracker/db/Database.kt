@@ -14,26 +14,23 @@ import uk.co.markormesher.tracker.models.LogEntryMeta
 import uk.co.markormesher.tracker.widget.WidgetProvider
 import java.io.File
 
-class Database private constructor(private val context: Context):
-		SQLiteOpenHelper(context, Database.NAME, null, Database.VERSION) {
+private val dbName = "db"
+private val dbVersion = 1
+
+class Database private constructor(private val context: Context): SQLiteOpenHelper(context, dbName, null, dbVersion) {
 
 	companion object {
-		private val NAME = "db"
-		private val VERSION = 1
+		val LOG_ENTRIES_UPDATED_ACTION = "uk.co.markormesher.tracker.LOG_ENTRIES_UPDATED"
 
 		private var instance: Database? = null
 		fun getInstance(context: Context): Database {
-			if (instance == null) {
-				instance = Database(context)
-			}
+			instance = instance ?: Database(context)
 			return instance!!
 		}
-
-		val LOG_ENTRIES_UPDATED_ACTION = "uk.co.markormesher.tracker.LOG_ENTRIES_UPDATED"
 	}
 
 	override fun onCreate(db: SQLiteDatabase) {
-		onUpgrade(db, 0, Database.VERSION)
+		onUpgrade(db, 0, dbVersion)
 	}
 
 	override fun onUpgrade(db: SQLiteDatabase, from: Int, to: Int) {
@@ -69,7 +66,14 @@ class Database private constructor(private val context: Context):
 		}
 		cursor.close()
 
-		uiThread { callback?.invoke(output.sortedByDescending { it.startTime.millis }) }
+		val sortedOutput = output.sortedByDescending { it.startTime.millis }
+		sortedOutput.forEachIndexed { index, logEntry ->
+			if (index > 0) {
+				logEntry.endTime = sortedOutput[index - 1].startTime
+			}
+		}
+
+		uiThread { callback?.invoke(sortedOutput) }
 	}
 
 	fun getCurrentLogEntry(callback: ((entry: LogEntry?) -> Unit)? = null) = doAsync {
@@ -87,7 +91,7 @@ class Database private constructor(private val context: Context):
 		uiThread { callback?.invoke(output) }
 	}
 
-	fun saveLogEntry(logEntry: LogEntry, callback: ((successful: Boolean) -> Unit)? = null) = doAsync {
+	fun saveLogEntry(logEntry: LogEntry, callback: (() -> Unit)? = null) = doAsync {
 		writableDatabase.insertWithOnConflict(
 				LogEntryMeta.TABLE_NAME,
 				null,
@@ -95,37 +99,32 @@ class Database private constructor(private val context: Context):
 				SQLiteDatabase.CONFLICT_REPLACE
 		)
 
-		val bIntent = Intent(context, WidgetProvider::class.java)
-		bIntent.action = LOG_ENTRIES_UPDATED_ACTION
-		context.sendBroadcast(bIntent)
+		sendUpdateBroadcast()
 
-		uiThread { callback?.invoke(true) }
+		uiThread { callback?.invoke() }
 	}
 
-	fun deleteLogEntry(logEntry: LogEntry, callback: ((successful: Boolean) -> Unit)? = null) = doAsync {
+	fun deleteLogEntry(logEntry: LogEntry, callback: (() -> Unit)? = null) = doAsync {
 		writableDatabase.delete(
 				LogEntryMeta.TABLE_NAME,
 				"${LogEntryMeta.ID} = ?",
 				arrayOf(logEntry.id)
 		)
 
-		val bIntent = Intent(context, WidgetProvider::class.java)
-		bIntent.action = LOG_ENTRIES_UPDATED_ACTION
-		context.sendBroadcast(bIntent)
+		sendUpdateBroadcast()
 
-		uiThread { callback?.invoke(true) }
+		uiThread { callback?.invoke() }
+	}
+
+	private fun sendUpdateBroadcast() {
+		val updateBroadcastIntent = Intent(context, WidgetProvider::class.java)
+		updateBroadcastIntent.action = LOG_ENTRIES_UPDATED_ACTION
+		context.sendBroadcast(updateBroadcastIntent)
 	}
 
 	fun prepareExportData(callback: ((data: String) -> Unit)? = null) = doAsync {
 		getSortedLogEntries({ entries ->
 			val output = StringBuilder()
-
-			entries.forEachIndexed { index, logEntry ->
-				if (index > 0) {
-					logEntry.endTime = entries[index - 1].startTime
-				}
-			}
-
 			output.append("[")
 
 			entries.forEach { logEntry ->
@@ -135,13 +134,17 @@ class Database private constructor(private val context: Context):
 					if (endTime == null) {
 						endTime = DateTime.now()
 					}
-					output.append("{" +
-							"\"id\": \"$id\"," +
-							"\"title\": \"$title\"," +
-							"\"note\": ${if (note.isNullOrBlank()) "null" else "\"$note\""}," +
-							"\"startTime\": \"$startTime\"," +
-							"\"endTime\": \"$endTime\"" +
-							"},")
+					output.append("{")
+					output.append("\"id\": \"$id\",")
+					output.append("\"title\": \"$title\",")
+					output.append("\"startTime\": \"$startTime\",")
+					output.append("\"endTime\": \"$endTime\",")
+					if (note.isNullOrBlank()) {
+						output.append("\"note\": null")
+					} else {
+						output.append("\"note\": \"$note\"")
+					}
+					output.append("},")
 				}
 			}
 
@@ -164,11 +167,9 @@ class Database private constructor(private val context: Context):
 				} else {
 					uiThread { callback?.invoke(null) }
 				}
-			} catch (e: Exception) {
-				e.printStackTrace()
+			} catch (ex: Exception) {
 				uiThread { callback?.invoke(null) }
 			}
-
 		})
 	}
 }

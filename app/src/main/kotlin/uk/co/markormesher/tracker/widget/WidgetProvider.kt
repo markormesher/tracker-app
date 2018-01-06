@@ -10,9 +10,9 @@ import android.view.View
 import android.widget.RemoteViews
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import uk.co.markormesher.tracker.LogEntryQuickChooserDialog
 import uk.co.markormesher.tracker.MainActivity
 import uk.co.markormesher.tracker.R
-import uk.co.markormesher.tracker.LogEntryTitleChooserActivity
 import uk.co.markormesher.tracker.db.Database
 
 class WidgetProvider: AppWidgetProvider() {
@@ -45,7 +45,7 @@ class WidgetProvider: AppWidgetProvider() {
 			}
 
 			appWidgetIds.forEach { appWidgetId ->
-				val switchIntent = Intent(context, LogEntryTitleChooserActivity::class.java)
+				val switchIntent = Intent(context, LogEntryQuickChooserDialog::class.java)
 				val switchPendingIntent = PendingIntent.getActivity(context, 0, switchIntent, 0)
 				val openIntent = Intent(context, MainActivity::class.java)
 				val openPendingIntent = PendingIntent.getActivity(context, 0, openIntent, 0)

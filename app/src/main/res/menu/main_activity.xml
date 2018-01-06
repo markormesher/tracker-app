@@ -6,7 +6,7 @@
 	<item
 			android:id="@+id/exportData"
 			android:icon="@drawable/ic_file_download_white_24dp"
-			app:showAsAction="always"
+			app:showAsAction="ifRoom"
 			android:title="@string/export_data_btn"/>
 
 	<item
