@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		tools:context="uk.co.markormesher.tracker.EditLogEntryActivity"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingTop="@dimen/activity_padding_vertical"
+		android:paddingBottom="@dimen/activity_padding_vertical"
+		android:paddingLeft="@dimen/activity_padding_horizontal"
+		android:paddingRight="@dimen/activity_padding_horizontal"
+		>
+
+	<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/log_entry_edit_activity_title"
+			style="@style/TextAppearance.AppCompat"
+			/>
+
+	<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			>
+
+		<EditText
+				android:id="@+id/titleEdit"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_toStartOf="@+id/quickInputBtn"
+				android:hint="@string/log_entry_edit_activity_hint"
+				/>
+
+		<ImageView
+				android:id="@id/quickInputBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				android:padding="@dimen/form_button_padding"
+				android:src="@drawable/ic_flash_on_white_24dp"
+				android:tint="#000000"
+				android:alpha="0.6"
+				android:background="?android:attr/selectableItemBackground"
+				android:contentDescription="@string/log_entry_edit_activity_btn"
+				/>
+
+	</RelativeLayout>
+
+	<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/form_spacing"
+			android:text="@string/log_entry_edit_start_time_title"
+			style="@style/TextAppearance.AppCompat"
+			/>
+
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:weightSum="2"
+			>
+
+		<EditText
+				android:id="@+id/startDate"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:inputType="date"
+				android:focusable="false"
+				android:gravity="center"
+				android:hint="@string/log_entry_edit_date_hint"
+				/>
+
+		<EditText
+				android:id="@+id/startTime"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:inputType="time"
+				android:focusable="false"
+				android:gravity="center"
+				android:hint="@string/log_entry_edit_time_hint"
+				/>
+
+	</LinearLayout>
+
+	<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/form_spacing"
+			android:text="@string/log_entry_edit_note_title"
+			style="@style/TextAppearance.AppCompat"
+			/>
+
+	<EditText
+			android:id="@+id/notesEdit"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/log_entry_edit_note_hint"
+			android:gravity="top"
+			/>
+
+</LinearLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		tools:context="uk.co.markormesher.tracker.MainActivity"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		>
+
+	<ProgressBar
+			android:id="@+id/loadingSpinner"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			/>
+
+	<TextView
+			android:id="@+id/emptyMessage"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:text="@string/no_log_entries"
+			/>
+
+	<android.support.v7.widget.RecyclerView
+			android:id="@+id/listView"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			/>
+
+	<uk.co.markormesher.android_fab.FloatingActionButton
+			android:id="@+id/fab"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:buttonIcon="@drawable/ic_add_white_24dp"
+			app:buttonBackgroundColour="@color/primaryColor"
+			/>
+
+</RelativeLayout>

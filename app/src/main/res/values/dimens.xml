@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<dimen name="activity_padding_horizontal">10dp</dimen>
+	<dimen name="activity_padding_vertical">6dp</dimen>
+
+	<dimen name="widget_text_padding">6dp</dimen>
+	<dimen name="widget_button_padding">16dp</dimen>
+
+	<dimen name="form_spacing">6dp</dimen>
+	<dimen name="form_button_padding">10dp</dimen>
+
+</resources>

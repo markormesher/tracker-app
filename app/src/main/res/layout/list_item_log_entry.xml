@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="@dimen/activity_padding_vertical"
+		android:paddingBottom="@dimen/activity_padding_vertical"
+		>
+
+	<ImageView
+			android:id="@+id/icon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentStart="true"
+			android:layout_centerVertical="true"
+			android:padding="@dimen/form_button_padding"
+			android:tint="#000000"
+			android:alpha="0.4"
+			android:contentDescription="@null"
+			android:src="@drawable/ic_crop_free_white_24dp"
+			/>
+
+	<LinearLayout
+			android:id="@+id/textWrapper"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_toEndOf="@id/icon"
+			android:layout_toStartOf="@+id/switchBtn"
+			android:orientation="vertical"
+			>
+
+		<TextView
+				android:id="@+id/currentActivityLabel"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:text="@string/log_entry_current_activity"
+				style="@style/TextAppearance.AppCompat"
+				/>
+
+		<TextView
+				android:id="@+id/title"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				style="@style/TextAppearance.AppCompat"
+				/>
+
+		<TextView
+				android:id="@+id/startTime"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				style="@style/TextAppearance.AppCompat.Small"
+				/>
+
+		<TextView
+				android:id="@+id/note"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:maxLines="1"
+				android:ellipsize="end"
+				android:alpha="0.8"
+				style="@style/TextAppearance.AppCompat.Small"
+				/>
+
+	</LinearLayout>
+
+	<ImageView
+			android:id="@id/switchBtn"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"
+			android:padding="@dimen/form_button_padding"
+			android:scaleType="fitCenter"
+			android:tint="#000000"
+			android:src="@drawable/ic_compare_arrows_white_24dp"
+			android:contentDescription="@string/log_entry_switch_btn"
+			android:background="?android:attr/selectableItemBackground"
+			/>
+
+</RelativeLayout>
