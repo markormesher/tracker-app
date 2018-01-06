@@ -19,10 +19,7 @@ import okhttp3.RequestBody
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import uk.co.markormesher.tracker.db.Database
-import uk.co.markormesher.tracker.helpers.checkPermissionList
-import uk.co.markormesher.tracker.helpers.checkPermissionRequestResult
-import uk.co.markormesher.tracker.helpers.consume
-import uk.co.markormesher.tracker.helpers.requestPermissionList
+import uk.co.markormesher.tracker.helpers.*
 import uk.co.markormesher.tracker.models.LogEntry
 import uk.co.markormesher.tracker.models.LogEntryMeta
 import java.io.File
@@ -158,18 +155,30 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	}
 
 	private fun dataSync() {
+		val accessKey = getAccessKey()
+		if (accessKey == null) {
+			promptForAccessKey({ dataSync() })
+			return
+		}
+
 		Toast.makeText(this, R.string.sync_data_in_progress, Toast.LENGTH_SHORT).show()
 		Database.getInstance(this).prepareExportData({ data ->
 			doAsync {
 				val request = Request.Builder()
 						.url("https://tracker.markormesher.co.uk/data")
+						.header("Authorization", "Bearer $accessKey")
 						.post(RequestBody.create(MediaType.parse("application/octet-stream"), data))
 						.build()
 				val response = httpClient.newCall(request).execute()
 				if (response.isSuccessful) {
 					uiThread { Toast.makeText(this@MainActivity, R.string.sync_data_succeeded, Toast.LENGTH_SHORT).show() }
 				} else {
-					uiThread { Toast.makeText(this@MainActivity, R.string.sync_data_failed, Toast.LENGTH_SHORT).show() }
+					if (response.code() == 403) {
+						setAccessKey(null)
+						uiThread { Toast.makeText(this@MainActivity, R.string.access_key_failed, Toast.LENGTH_SHORT).show() }
+					} else {
+						uiThread { Toast.makeText(this@MainActivity, R.string.sync_data_failed, Toast.LENGTH_SHORT).show() }
+					}
 				}
 				response.close()
 			}
