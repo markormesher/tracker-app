@@ -116,7 +116,7 @@ class Database private constructor(private val context: Context):
 		uiThread { callback?.invoke(true) }
 	}
 
-	fun prepareDataDownload(callback: ((path: String?) -> Unit)? = null) = doAsync {
+	fun prepareExportData(callback: ((data: String) -> Unit)? = null) = doAsync {
 		getSortedLogEntries({ entries ->
 			val output = StringBuilder()
 
@@ -148,12 +148,18 @@ class Database private constructor(private val context: Context):
 			output.setLength(output.length - 1)
 			output.append("]")
 
+			callback?.invoke(output.toString())
+		})
+	}
+
+	fun prepareExportDataAsFile(callback: ((path: String?) -> Unit)? = null) = doAsync {
+		prepareExportData({ data ->
 			try {
 				val timestamp = DateTime.now().toString(ISODateTimeFormat.dateTimeNoMillis())
 				val folder = File(Environment.getExternalStorageDirectory().absolutePath, "/Tracker/")
 				if (folder.exists() || folder.mkdirs()) {
 					val file = File(folder, "tracker-output-$timestamp.json")
-					file.writeText(output.toString())
+					file.writeText(data)
 					uiThread { callback?.invoke(file.absolutePath) }
 				} else {
 					uiThread { callback?.invoke(null) }
@@ -162,7 +168,7 @@ class Database private constructor(private val context: Context):
 				e.printStackTrace()
 				uiThread { callback?.invoke(null) }
 			}
+
 		})
 	}
-
 }

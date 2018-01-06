@@ -9,4 +9,10 @@
 			app:showAsAction="always"
 			android:title="@string/export_data_btn"/>
 
+	<item
+			android:id="@+id/syncData"
+			android:icon="@drawable/ic_sync_white_24dp"
+			app:showAsAction="always"
+			android:title="@string/sync_data_btn"/>
+
 </menu>

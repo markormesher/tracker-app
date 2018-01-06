@@ -1,5 +1,6 @@
 <resources>
 
+	<string name="ok">OK</string>
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
 	<string name="save">Save</string>
@@ -7,10 +8,19 @@
 
 	<string name="app_name">Tracker</string>
 
+	<string name="permissions_request_title">App Permissions</string>
+	<string name="permissions_request_primer">Before you get started, we need to request the permissions needed for this app to work.</string>
+	<string name="permissions_request_failure">Oh no, that didn\'t work! Would you like to try again?</string>
+
 	<string name="export_data_btn">Export Data</string>
 	<string name="export_data_in_progress">Preparing data…</string>
 	<string name="export_data_failed">Data export failed</string>
 	<string name="export_data_share">Share exported data</string>
+
+	<string name="sync_data_btn">Export Data</string>
+	<string name="sync_data_in_progress">Preparing data…</string>
+	<string name="sync_data_failed">Data sync failed</string>
+	<string name="sync_data_succeeded">Data sync complete</string>
 
 	<string name="no_log_entries">No log entries yet</string>
 	<string name="log_entry_start_time">Since %s</string>

@@ -1,5 +1,6 @@
 package uk.co.markormesher.tracker
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,12 +12,26 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import uk.co.markormesher.tracker.db.Database
+import uk.co.markormesher.tracker.helpers.checkPermissionList
+import uk.co.markormesher.tracker.helpers.checkPermissionRequestResult
 import uk.co.markormesher.tracker.helpers.createActivityChooser
+import uk.co.markormesher.tracker.helpers.requestPermissionList
 import uk.co.markormesher.tracker.models.LogEntry
 import java.io.File
 
 class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
+
+	private val REQUIRED_PERMISSIONS = arrayOf(
+			Manifest.permission.WRITE_EXTERNAL_STORAGE,
+			Manifest.permission.INTERNET
+	)
 
 	private val listAdapter by lazy { LogEntryListAdapter(this, this) }
 	private var viewState = ViewState.EMPTY
@@ -25,9 +40,21 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 			updateView()
 		}
 
+	private val httpClient by lazy { OkHttpClient() }
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		initView()
+
+		if (!checkPermissionList(REQUIRED_PERMISSIONS)) {
+			requestPermissionList(REQUIRED_PERMISSIONS)
+		}
+	}
+
+	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+		if (!checkPermissionRequestResult(requestCode, grantResults)) {
+			requestPermissionList(REQUIRED_PERMISSIONS, true)
+		}
 	}
 
 	override fun onResume() {
@@ -77,6 +104,10 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 		when (item.itemId) {
 			R.id.exportData -> {
 				startDataExport()
+				return true
+			}
+			R.id.syncData -> {
+				startDataSync()
 				return true
 			}
 		}
@@ -133,7 +164,7 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 
 	private fun startDataExport() {
 		Toast.makeText(this, R.string.export_data_in_progress, Toast.LENGTH_SHORT).show()
-		Database.getInstance(this).prepareDataDownload({ path ->
+		Database.getInstance(this).prepareExportDataAsFile({ path ->
 			if (path != null) {
 				val shareIntent = Intent()
 				shareIntent.action = Intent.ACTION_SEND
@@ -142,6 +173,25 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 				startActivity(Intent.createChooser(shareIntent, getString(R.string.export_data_share)))
 			} else {
 				Toast.makeText(this, getString(R.string.export_data_failed), Toast.LENGTH_SHORT).show()
+			}
+		})
+	}
+
+	private fun startDataSync() {
+		Toast.makeText(this, R.string.sync_data_in_progress, Toast.LENGTH_SHORT).show()
+		Database.getInstance(this).prepareExportData({ data ->
+			doAsync {
+				val request = Request.Builder()
+						.url("https://tracker.markormesher.co.uk/data")
+						.post(RequestBody.create(MediaType.parse("application/octet-stream"), data))
+						.build()
+				val response = httpClient.newCall(request).execute()
+				if (response.isSuccessful) {
+					uiThread { Toast.makeText(this@MainActivity, R.string.sync_data_succeeded, Toast.LENGTH_SHORT).show() }
+				} else {
+					uiThread { Toast.makeText(this@MainActivity, R.string.sync_data_failed, Toast.LENGTH_SHORT).show() }
+				}
+				response.close()
 			}
 		})
 	}
