@@ -5,6 +5,7 @@ import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Environment
+import android.util.Log
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
@@ -124,34 +125,14 @@ class Database private constructor(private val context: Context): SQLiteOpenHelp
 
 	fun prepareExportData(callback: ((data: String) -> Unit)? = null) = doAsync {
 		getSortedLogEntries({ entries ->
-			val output = StringBuilder()
-			output.append("[")
+			val output = entries.joinToString(
+					prefix = "[", separator = ",", postfix = "]",
+					transform = { it.toJsonString() }
+			)
 
-			entries.forEach { logEntry ->
-				with(logEntry) {
-					title = title.replace("\"", "\\\"")
-					note = note?.replace("\"", "\\\"")
-					if (endTime == null) {
-						endTime = DateTime.now()
-					}
-					output.append("{")
-					output.append("\"id\": \"$id\",")
-					output.append("\"title\": \"$title\",")
-					output.append("\"startTime\": \"$startTime\",")
-					output.append("\"endTime\": \"$endTime\",")
-					if (note.isNullOrBlank()) {
-						output.append("\"note\": null")
-					} else {
-						output.append("\"note\": \"$note\"")
-					}
-					output.append("},")
-				}
-			}
+			Log.d("TRACKER_APP", output)
 
-			output.setLength(output.length - 1)
-			output.append("]")
-
-			callback?.invoke(output.toString())
+			uiThread { callback?.invoke(output) }
 		})
 	}
 

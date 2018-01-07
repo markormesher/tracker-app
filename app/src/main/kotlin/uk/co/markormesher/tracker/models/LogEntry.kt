@@ -48,6 +48,31 @@ data class LogEntry(
 		return cv
 	}
 
+	fun toJsonString(replaceNullEndTime: Boolean = true): String {
+		with(StringBuilder()) {
+			append("{")
+			append("\"id\":\"$id\",")
+			append("\"title\":\"$title\",")
+			append("\"startTime\":\"$startTime\",")
+			if (endTime == null) {
+				if (replaceNullEndTime) {
+					append("\"endTime\":\"${DateTime.now()}\",")
+				} else {
+					append("\"endTime\":null,")
+				}
+			} else {
+				append("\"endTime\":\"$endTime\",")
+			}
+			if (note.isNullOrBlank()) {
+				append("\"note\":null")
+			} else {
+				append("\"note\":\"$note\"")
+			}
+			append("}")
+			return toString()
+		}
+	}
+
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
 		parcel.writeString(id)
 		parcel.writeString(title)
