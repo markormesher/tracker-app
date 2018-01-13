@@ -14,17 +14,24 @@
 			android:supportsRtl="true"
 			android:theme="@style/AppTheme">
 
-		<activity android:name=".MainActivity">
+		<activity
+				android:name=".MainActivity"
+				android:noHistory="true"
+				>
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".EditLogEntryActivity"/>
+		<activity
+				android:name=".EditLogEntryActivity"
+				android:noHistory="true"
+				/>
 
 		<activity
 				android:name=".LogEntryQuickChooserDialog"
+				android:noHistory="true"
 				android:theme="@style/AppTheme.Dialog"
 				/>
 
