@@ -12,10 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.main_activity.*
-import okhttp3.MediaType
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import uk.co.markormesher.tracker.db.Database
@@ -46,6 +43,8 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 		if (!checkPermissionList(requiredPermissions)) {
 			requestPermissionList(requiredPermissions)
 		}
+
+		SyncService.schedule(this)
 	}
 
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -164,11 +163,7 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 		Toast.makeText(this, R.string.sync_data_in_progress, Toast.LENGTH_SHORT).show()
 		Database.getInstance(this).prepareExportData({ data ->
 			doAsync {
-				val request = Request.Builder()
-						.url("https://tracker.markormesher.co.uk/data")
-						.header("Authorization", "Bearer $accessKey")
-						.post(RequestBody.create(MediaType.parse("application/octet-stream"), data))
-						.build()
+				val request = createUploadRequest(data, accessKey)
 				val response = httpClient.newCall(request).execute()
 				if (response.isSuccessful) {
 					uiThread { Toast.makeText(this@MainActivity, R.string.sync_data_succeeded, Toast.LENGTH_SHORT).show() }

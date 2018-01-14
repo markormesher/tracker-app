@@ -5,7 +5,6 @@ import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Environment
-import android.util.Log
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
@@ -129,8 +128,6 @@ class Database private constructor(private val context: Context): SQLiteOpenHelp
 					prefix = "[", separator = ",", postfix = "]",
 					transform = { it.toJsonString() }
 			)
-
-			Log.d("TRACKER_APP", output)
 
 			uiThread { callback?.invoke(output) }
 		})
