@@ -9,9 +9,9 @@ val defaultActivities = arrayOf(
 		"Personal development",
 		"Personal projects",
 		"Sleeping",
-		"Travelling",
 		"Work",
-		"Work break"
+		"Work break",
+		"Work travel"
 )
 
 val defaultActivityIcons = mapOf(
@@ -21,7 +21,7 @@ val defaultActivityIcons = mapOf(
 		Pair("Personal development", R.drawable.ic_trending_up_white_24dp),
 		Pair("Personal projects", R.drawable.ic_build_white_24dp),
 		Pair("Sleeping", R.drawable.ic_hotel_white_24dp),
-		Pair("Travelling", R.drawable.ic_flight_takeoff_white_24dp),
 		Pair("Work", R.drawable.ic_work_white_24dp),
-		Pair("Work break", R.drawable.ic_pause_circle_outline_white_24dp)
+		Pair("Work break", R.drawable.ic_pause_circle_outline_white_24dp),
+		Pair("Work travel", R.drawable.ic_flight_takeoff_white_24dp)
 )
