@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-	compileSdkVersion 26
-	buildToolsVersion "26.0.1"
+	compileSdkVersion 27
+	buildToolsVersion '27.0.3'
 
 	defaultConfig {
 		applicationId "uk.co.markormesher.tracker"
 		minSdkVersion 24
-		targetSdkVersion 26
+		targetSdkVersion 27
 		versionCode 1
 		versionName "1.0"
 		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -21,22 +21,22 @@ android {
 
 	buildTypes {
 		release {
-			minifyEnabled false
+			minifyEnabled true
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 		}
 	}
 }
 
 dependencies {
-	compile fileTree(dir: 'libs', include: ['*.jar'])
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-	compile "org.jetbrains.anko:anko-commons:$anko_version"
-	compile 'com.android.support:appcompat-v7:26.0.1'
-	compile 'com.android.support:recyclerview-v7:26.0.1'
-	compile 'com.squareup.okhttp3:okhttp:3.9.1'
-	compile 'joda-time:joda-time:2.9.9'
-	compile 'uk.co.markormesher:android-fab:2.0.0'
+	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+	implementation "org.jetbrains.anko:anko-commons:$anko_version"
+	implementation 'com.android.support:appcompat-v7:27.1.1'
+	implementation 'com.android.support:recyclerview-v7:27.1.1'
+	implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+	implementation 'joda-time:joda-time:2.9.9'
+	implementation 'uk.co.markormesher:android-fab:2.3.0-rc1'
 }
 
 repositories {

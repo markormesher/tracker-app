@@ -27,7 +27,7 @@ class LogEntryListAdapter(private val context: Context, private val eventListene
 
 	override fun getItemCount() = logEntries.size
 
-	override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): LogEntryListAdapter.ViewHolder {
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogEntryListAdapter.ViewHolder {
 		return ViewHolder(layoutInflater.inflate(R.layout.log_entry_list_item, parent, false))
 	}
 
