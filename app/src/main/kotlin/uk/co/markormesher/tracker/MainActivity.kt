@@ -2,7 +2,6 @@ package uk.co.markormesher.tracker
 
 import android.Manifest
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
@@ -19,7 +18,6 @@ import uk.co.markormesher.tracker.db.Database
 import uk.co.markormesher.tracker.helpers.*
 import uk.co.markormesher.tracker.models.LogEntry
 import uk.co.markormesher.tracker.models.LogEntryMeta
-import java.io.File
 
 class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 
@@ -96,7 +94,6 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-		R.id.exportData -> consume { dataExport() }
 		R.id.syncData -> consume { dataSync() }
 		else -> super.onOptionsItemSelected(item)
 	}
@@ -136,21 +133,6 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 			intent.putExtra(LogEntryMeta.ENTITY_NAME, logEntry)
 		}
 		startActivity(intent)
-	}
-
-	private fun dataExport() {
-		Toast.makeText(this, R.string.export_data_in_progress, Toast.LENGTH_SHORT).show()
-		Database.getInstance(this).prepareExportDataAsFile({ path ->
-			if (path != null) {
-				val shareIntent = Intent()
-				shareIntent.action = Intent.ACTION_SEND
-				shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(path)))
-				shareIntent.type = "application/json"
-				startActivity(Intent.createChooser(shareIntent, getString(R.string.export_data_share)))
-			} else {
-				Toast.makeText(this, getString(R.string.export_data_failed), Toast.LENGTH_SHORT).show()
-			}
-		})
 	}
 
 	private fun dataSync() {

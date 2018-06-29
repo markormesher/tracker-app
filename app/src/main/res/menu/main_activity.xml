@@ -4,12 +4,6 @@
 		xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
-			android:id="@+id/exportData"
-			android:icon="@drawable/ic_file_download_white_24dp"
-			app:showAsAction="ifRoom"
-			android:title="@string/export_data_btn"/>
-
-	<item
 			android:id="@+id/syncData"
 			android:icon="@drawable/ic_sync_white_24dp"
 			app:showAsAction="always"
