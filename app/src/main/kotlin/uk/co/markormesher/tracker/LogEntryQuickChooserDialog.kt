@@ -3,13 +3,13 @@ package uk.co.markormesher.tracker
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.log_entry_quick_chooser_dialog.*
 import kotlinx.android.synthetic.main.log_entry_quick_chooser_list_item.view.*
 import uk.co.markormesher.tracker.db.Database
@@ -18,10 +18,10 @@ import uk.co.markormesher.tracker.helpers.defaultActivityIcons
 import uk.co.markormesher.tracker.models.LogEntry
 import uk.co.markormesher.tracker.models.LogEntryMeta
 
-class LogEntryQuickChooserDialog: AppCompatActivity() {
+class LogEntryQuickChooserDialog : AppCompatActivity() {
 
 	companion object {
-		val FOR_RESULT = "for_result"
+		const val FOR_RESULT = "for_result"
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,8 +29,8 @@ class LogEntryQuickChooserDialog: AppCompatActivity() {
 		setFinishOnTouchOutside(true)
 		setContentView(R.layout.log_entry_quick_chooser_dialog)
 
-		quickChooserRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-		quickChooserRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+		quickChooserRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+		quickChooserRecyclerView.addItemDecoration(DividerItemDecoration(this, RecyclerView.VERTICAL))
 		quickChooserRecyclerView.adapter = ListAdapter()
 	}
 
@@ -41,11 +41,11 @@ class LogEntryQuickChooserDialog: AppCompatActivity() {
 			setResult(Activity.RESULT_OK, data)
 			finish()
 		} else {
-			Database.getInstance(this).saveLogEntry(LogEntry(title = title), { finish() })
+			Database.getInstance(this).saveLogEntry(LogEntry(title = title)) { runOnUiThread { finish() } }
 		}
 	}
 
-	private inner class ListAdapter: RecyclerView.Adapter<ListAdapter.ViewHolder>() {
+	private inner class ListAdapter : RecyclerView.Adapter<ListAdapter.ViewHolder>() {
 
 		private val layoutInflater by lazy { LayoutInflater.from(this@LogEntryQuickChooserDialog)!! }
 
@@ -64,7 +64,7 @@ class LogEntryQuickChooserDialog: AppCompatActivity() {
 			holder.rootView.setOnClickListener { onTitleSelected(title) }
 		}
 
-		private inner class ViewHolder(val rootView: View): RecyclerView.ViewHolder(rootView) {
+		private inner class ViewHolder(val rootView: View) : RecyclerView.ViewHolder(rootView) {
 			val iconView = rootView.iconView!!
 			val titleView = rootView.titleView!!
 		}

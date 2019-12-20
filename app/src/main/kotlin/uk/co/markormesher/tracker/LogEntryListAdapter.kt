@@ -1,10 +1,11 @@
 package uk.co.markormesher.tracker
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.log_entry_list_item.view.*
 import org.joda.time.DateTime
 import org.joda.time.Period
@@ -70,9 +71,26 @@ class LogEntryListAdapter(private val context: Context, private val eventListene
 				false
 			}
 		}
+
+		var dupe = false;
+		if (position > 0) {
+			val prevEntry = logEntries[position - 1]
+			if (prevEntry.title == logEntry.title) {
+				dupe = true
+			}
+		}
+
+		if (position < logEntries.size - 2) {
+			val nextEntry = logEntries[position + 1]
+			if (nextEntry.title == logEntry.title) {
+				dupe = true
+			}
+		}
+
+		holder.rootView.setBackgroundColor(if (dupe) Color.RED else Color.WHITE)
 	}
 
-	class ViewHolder(v: View): RecyclerView.ViewHolder(v) {
+	class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 		val rootView = v
 		val currentActivityLabel = v.currentActivityLabel!!
 		val iconView = v.iconView!!

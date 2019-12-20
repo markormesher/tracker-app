@@ -4,23 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.os.Environment
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
 import uk.co.markormesher.tracker.models.LogEntry
 import uk.co.markormesher.tracker.models.LogEntryMeta
 import uk.co.markormesher.tracker.widget.WidgetProvider
-import java.io.File
 
-private val dbName = "db"
-private val dbVersion = 1
+private const val DB_NAME = "db"
+private const val DB_VERSION = 1
 
-class Database private constructor(private val context: Context): SQLiteOpenHelper(context, dbName, null, dbVersion) {
+class Database private constructor(private val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
 	companion object {
-		val LOG_ENTRIES_UPDATED_ACTION = "uk.co.markormesher.tracker.LOG_ENTRIES_UPDATED"
+		const val LOG_ENTRIES_UPDATED_ACTION = "uk.co.markormesher.tracker.LOG_ENTRIES_UPDATED"
 
 		private var instance: Database? = null
 		fun getInstance(context: Context): Database {
@@ -30,7 +25,7 @@ class Database private constructor(private val context: Context): SQLiteOpenHelp
 	}
 
 	override fun onCreate(db: SQLiteDatabase) {
-		onUpgrade(db, 0, dbVersion)
+		onUpgrade(db, 0, DB_VERSION)
 	}
 
 	override fun onUpgrade(db: SQLiteDatabase, from: Int, to: Int) {
@@ -73,7 +68,7 @@ class Database private constructor(private val context: Context): SQLiteOpenHelp
 			}
 		}
 
-		uiThread { callback?.invoke(sortedOutput) }
+		callback?.invoke(sortedOutput)
 	}
 
 	fun getCurrentLogEntry(callback: ((entry: LogEntry?) -> Unit)? = null) = doAsync {
@@ -88,7 +83,7 @@ class Database private constructor(private val context: Context): SQLiteOpenHelp
 		}
 		cursor.close()
 
-		uiThread { callback?.invoke(output) }
+		callback?.invoke(output)
 	}
 
 	fun saveLogEntry(logEntry: LogEntry, callback: (() -> Unit)? = null) = doAsync {
@@ -101,7 +96,22 @@ class Database private constructor(private val context: Context): SQLiteOpenHelp
 
 		sendUpdateBroadcast()
 
-		uiThread { callback?.invoke() }
+		callback?.invoke()
+	}
+
+	fun saveLogEntries(logEntries: List<LogEntry>, callback: (() -> Unit)? = null) = doAsync {
+		logEntries.forEach { entry ->
+			writableDatabase.insertWithOnConflict(
+					LogEntryMeta.TABLE_NAME,
+					null,
+					entry.toContentValues(),
+					SQLiteDatabase.CONFLICT_REPLACE
+			)
+		}
+
+		sendUpdateBroadcast()
+
+		callback?.invoke()
 	}
 
 	fun deleteLogEntry(logEntry: LogEntry, callback: (() -> Unit)? = null) = doAsync {
@@ -113,7 +123,13 @@ class Database private constructor(private val context: Context): SQLiteOpenHelp
 
 		sendUpdateBroadcast()
 
-		uiThread { callback?.invoke() }
+		callback?.invoke()
+	}
+
+	fun deleteAllLogEntries(callback: (() -> Unit)? = null) = doAsync {
+		writableDatabase.delete(LogEntryMeta.TABLE_NAME, null, null)
+		sendUpdateBroadcast()
+		callback?.invoke()
 	}
 
 	private fun sendUpdateBroadcast() {
@@ -122,32 +138,14 @@ class Database private constructor(private val context: Context): SQLiteOpenHelp
 		context.sendBroadcast(updateBroadcastIntent)
 	}
 
-	fun prepareExportData(callback: ((data: String) -> Unit)? = null) = doAsync {
-		getSortedLogEntries({ entries ->
+	fun getAllEntriesAsJsonString(callback: ((data: String) -> Unit)? = null) = doAsync {
+		getSortedLogEntries { entries ->
 			val output = entries.joinToString(
 					prefix = "[", separator = ",", postfix = "]",
 					transform = { it.toJsonString() }
 			)
 
-			uiThread { callback?.invoke(output) }
-		})
-	}
-
-	fun prepareExportDataAsFile(callback: ((path: String?) -> Unit)? = null) = doAsync {
-		prepareExportData({ data ->
-			try {
-				val timestamp = DateTime.now().toString(ISODateTimeFormat.dateTimeNoMillis())
-				val folder = File(Environment.getExternalStorageDirectory().absolutePath, "/Tracker/")
-				if (folder.exists() || folder.mkdirs()) {
-					val file = File(folder, "tracker-output-$timestamp.json")
-					file.writeText(data)
-					uiThread { callback?.invoke(file.absolutePath) }
-				} else {
-					uiThread { callback?.invoke(null) }
-				}
-			} catch (ex: Exception) {
-				uiThread { callback?.invoke(null) }
-			}
-		})
+			callback?.invoke(output)
+		}
 	}
 }

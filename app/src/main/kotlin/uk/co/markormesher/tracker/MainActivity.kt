@@ -3,30 +3,26 @@ package uk.co.markormesher.tracker
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.main_activity.*
-import okhttp3.OkHttpClient
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import uk.co.markormesher.tracker.db.Database
 import uk.co.markormesher.tracker.helpers.*
 import uk.co.markormesher.tracker.models.LogEntry
 import uk.co.markormesher.tracker.models.LogEntryMeta
 
-class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
+class MainActivity : AppCompatActivity(), LogEntryListAdapter.EventListener {
 
 	private val requiredPermissions = arrayOf(
 			Manifest.permission.WRITE_EXTERNAL_STORAGE,
 			Manifest.permission.INTERNET
 	)
 
-	private val httpClient by lazy { OkHttpClient() }
 	private val listAdapter by lazy { LogEntryListAdapter(this, this) }
 	private var viewState = ViewState.EMPTY
 		set(value) {
@@ -59,8 +55,8 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	private fun initView() {
 		setContentView(R.layout.main_activity)
 
-		logEntryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-		logEntryRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+		logEntryRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+		logEntryRecyclerView.addItemDecoration(DividerItemDecoration(this, RecyclerView.VERTICAL))
 		logEntryRecyclerView.adapter = listAdapter
 
 		fabView.setOnClickListener { editLogEntry(null) }
@@ -89,12 +85,18 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 	}
 
 	override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+		menu?.clear()
 		menuInflater.inflate(R.menu.main_activity, menu)
 		return true
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-		R.id.syncData -> consume { dataSync() }
+		R.id.pushData -> consume {
+			pushData(true)
+		}
+		R.id.pullData -> consume {
+			pullData()
+		}
 		else -> super.onOptionsItemSelected(item)
 	}
 
@@ -113,16 +115,18 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 
 		viewState = ViewState.LOADING
 		Database.getInstance(this).getSortedLogEntries { entries ->
-			with(listAdapter) {
-				logEntries.clear()
-				logEntries.addAll(entries)
-				notifyDataSetChanged()
-			}
+			runOnUiThread {
+				with(listAdapter) {
+					logEntries.clear()
+					logEntries.addAll(entries)
+					notifyDataSetChanged()
+				}
 
-			viewState = if (entries.isEmpty()) {
-				ViewState.EMPTY
-			} else {
-				ViewState.LOADED
+				viewState = if (entries.isEmpty()) {
+					ViewState.EMPTY
+				} else {
+					ViewState.LOADED
+				}
 			}
 		}
 	}
@@ -133,33 +137,6 @@ class MainActivity: AppCompatActivity(), LogEntryListAdapter.EventListener {
 			intent.putExtra(LogEntryMeta.ENTITY_NAME, logEntry)
 		}
 		startActivity(intent)
-	}
-
-	private fun dataSync() {
-		val accessKey = getAccessKey()
-		if (accessKey == null) {
-			promptForAccessKey({ dataSync() })
-			return
-		}
-
-		Toast.makeText(this, R.string.sync_data_in_progress, Toast.LENGTH_SHORT).show()
-		Database.getInstance(this).prepareExportData({ data ->
-			doAsync {
-				val request = createUploadRequest(data, accessKey)
-				val response = httpClient.newCall(request).execute()
-				if (response.isSuccessful) {
-					uiThread { Toast.makeText(this@MainActivity, R.string.sync_data_succeeded, Toast.LENGTH_SHORT).show() }
-				} else {
-					if (response.code() == 403) {
-						setAccessKey(null)
-						uiThread { Toast.makeText(this@MainActivity, R.string.access_key_failed, Toast.LENGTH_SHORT).show() }
-					} else {
-						uiThread { Toast.makeText(this@MainActivity, R.string.sync_data_failed, Toast.LENGTH_SHORT).show() }
-					}
-				}
-				response.close()
-			}
-		})
 	}
 
 	private enum class ViewState {

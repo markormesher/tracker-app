@@ -5,11 +5,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import uk.co.markormesher.tracker.R
 
-private val permissionRequestCode = 1415
+private const val permissionRequestCode = 1415
 
 private fun shouldUseRuntimePermissions(): Boolean {
 	return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M

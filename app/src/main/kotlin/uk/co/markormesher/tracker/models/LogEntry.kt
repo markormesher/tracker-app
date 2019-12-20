@@ -5,15 +5,17 @@ import android.database.Cursor
 import android.os.Parcel
 import android.os.Parcelable
 import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
+import org.json.JSONObject
 import java.util.*
 
 object LogEntryMeta {
-	val ENTITY_NAME = "log_entry"
-	val TABLE_NAME = "log_entries"
-	val ID = "id"
-	val TITLE = "title"
-	val NOTE = "note"
-	val START_TIME = "start_time"
+	const val ENTITY_NAME = "log_entry"
+	const val TABLE_NAME = "log_entries"
+	const val ID = "id"
+	const val TITLE = "title"
+	const val NOTE = "note"
+	const val START_TIME = "start_time"
 }
 
 data class LogEntry(
@@ -21,20 +23,27 @@ data class LogEntry(
 		var title: String = "",
 		var note: String? = null,
 		var startTime: DateTime = DateTime.now()
-): Parcelable {
+) : Parcelable {
 
-	constructor(cursor: Cursor): this(
+	constructor(cursor: Cursor) : this(
 			cursor.getString(cursor.getColumnIndex(LogEntryMeta.ID)),
 			cursor.getString(cursor.getColumnIndex(LogEntryMeta.TITLE)),
 			cursor.getString(cursor.getColumnIndex(LogEntryMeta.NOTE)),
 			DateTime(cursor.getLong(cursor.getColumnIndex(LogEntryMeta.START_TIME)))
 	)
 
-	constructor(parcel: Parcel): this(
-			parcel.readString(),
-			parcel.readString(),
+	constructor(parcel: Parcel) : this(
+			parcel.readString()!!,
+			parcel.readString()!!,
 			parcel.readString(),
 			DateTime(parcel.readLong())
+	)
+
+	constructor(jsonObj: JSONObject): this(
+			jsonObj.getString("id"),
+			jsonObj.getString("title"),
+			if (jsonObj.optString("note", null) == "null") null else jsonObj.optString("note", null),
+			ISODateTimeFormat.dateTimeParser().parseDateTime(jsonObj.getString("startTime"))
 	)
 
 	var endTime: DateTime? = null
@@ -84,7 +93,7 @@ data class LogEntry(
 		return 0
 	}
 
-	companion object CREATOR: Parcelable.Creator<LogEntry> {
+	companion object CREATOR : Parcelable.Creator<LogEntry> {
 		override fun createFromParcel(parcel: Parcel): LogEntry = LogEntry(parcel)
 		override fun newArray(size: Int): Array<LogEntry?> = arrayOfNulls(size)
 	}

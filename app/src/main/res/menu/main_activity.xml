@@ -4,9 +4,13 @@
 		xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
-			android:id="@+id/syncData"
-			android:icon="@drawable/ic_sync_white_24dp"
-			app:showAsAction="always"
-			android:title="@string/sync_data_btn"/>
+			android:id="@+id/pushData"
+			app:showAsAction="never"
+			android:title="@string/push_data_btn"/>
+
+	<item
+			android:id="@+id/pullData"
+			app:showAsAction="never"
+			android:title="@string/pull_data_btn"/>
 
 </menu>

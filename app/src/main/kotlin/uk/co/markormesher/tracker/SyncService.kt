@@ -6,13 +6,9 @@ import android.app.job.JobScheduler
 import android.app.job.JobService
 import android.content.ComponentName
 import android.content.Context
-import okhttp3.OkHttpClient
-import org.jetbrains.anko.doAsync
-import uk.co.markormesher.tracker.db.Database
-import uk.co.markormesher.tracker.helpers.createUploadRequest
-import uk.co.markormesher.tracker.helpers.getAccessKey
+import uk.co.markormesher.tracker.helpers.pushData
 
-class SyncService: JobService() {
+class SyncService : JobService() {
 
 	companion object {
 		fun schedule(context: Context) {
@@ -29,29 +25,8 @@ class SyncService: JobService() {
 		}
 	}
 
-	private val httpClient by lazy { OkHttpClient() }
-
 	override fun onStartJob(params: JobParameters?): Boolean {
-		// if we don't have the access key yet, give up until the user syncs manually
-		val accessKey = getAccessKey() ?: return false
-
-		Database.getInstance(baseContext).prepareExportData { data ->
-			doAsync {
-				val request = createUploadRequest(data, accessKey)
-				val response = httpClient.newCall(request).execute()
-				if (response.isSuccessful) {
-					jobFinished(params, false)
-				} else {
-					// reschedule only if this was a real failure, not just a bad access key
-					if (response.code() == 403) {
-						jobFinished(params, false)
-					} else {
-						jobFinished(params, true)
-					}
-				}
-				response.close()
-			}
-		}
+		pushData(false) { successful -> jobFinished(params, successful) }
 		return true
 	}
 

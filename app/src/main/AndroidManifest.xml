@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
 		xmlns:android="http://schemas.android.com/apk/res/android"
-		package="uk.co.markormesher.tracker">
+		xmlns:tools="http://schemas.android.com/tools" package="uk.co.markormesher.tracker">
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
@@ -13,12 +13,11 @@
 			android:label="@string/app_name"
 			android:supportsRtl="true"
 			android:theme="@style/AppTheme"
-			>
-
+			tools:ignore="GoogleAppIndexingWarning"
+	>
 		<activity
 				android:name=".MainActivity"
-				android:noHistory="true"
-				>
+		>
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
@@ -27,14 +26,12 @@
 
 		<activity
 				android:name=".EditLogEntryActivity"
-				android:noHistory="true"
-				/>
+		/>
 
 		<activity
 				android:name=".LogEntryQuickChooserDialog"
-				android:noHistory="true"
 				android:theme="@style/AppTheme.Dialog"
-				/>
+		/>
 
 		<receiver android:name=".widget.WidgetProvider">
 			<intent-filter>
@@ -49,7 +46,7 @@
 		<service
 				android:name=".SyncService"
 				android:permission="android.permission.BIND_JOB_SERVICE"
-				/>
+		/>
 
 	</application>
 

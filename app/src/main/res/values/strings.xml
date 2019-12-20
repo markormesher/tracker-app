@@ -13,10 +13,15 @@
 	<string name="permissions_request_primer">Before you get started, we need to request the permissions needed for this app to work.</string>
 	<string name="permissions_request_failure">Oh no, that didn\'t work! Would you like to try again?</string>
 
-	<string name="sync_data_btn">Sync Data</string>
-	<string name="sync_data_in_progress">Preparing data…</string>
-	<string name="sync_data_failed">Data sync failed</string>
-	<string name="sync_data_succeeded">Data sync complete</string>
+	<string name="push_data_btn">Push</string>
+	<string name="push_data_in_progress">Pushing data…</string>
+	<string name="push_data_failed">Data push failed</string>
+	<string name="push_data_succeeded">Data push complete</string>
+
+	<string name="pull_data_btn">Pull</string>
+	<string name="pull_data_in_progress">Pulling data…</string>
+	<string name="pull_data_failed">Data pull failed</string>
+	<string name="pull_data_succeeded">Data pull complete</string>
 
 	<string name="access_key_title">Enter Access Key:</string>
 	<string name="access_key_hint">Access key</string>

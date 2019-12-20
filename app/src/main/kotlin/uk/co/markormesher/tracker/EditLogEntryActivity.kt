@@ -5,10 +5,10 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.edit_log_entry_activity.*
 import org.joda.time.format.DateTimeFormat
 import uk.co.markormesher.tracker.db.Database
@@ -16,7 +16,7 @@ import uk.co.markormesher.tracker.helpers.consume
 import uk.co.markormesher.tracker.models.LogEntry
 import uk.co.markormesher.tracker.models.LogEntryMeta
 
-class EditLogEntryActivity: AppCompatActivity() {
+class EditLogEntryActivity : AppCompatActivity() {
 
 	private lateinit var currentEntry: LogEntry
 	private var newEntry = false
@@ -109,7 +109,7 @@ class EditLogEntryActivity: AppCompatActivity() {
 	private fun saveEntry() {
 		currentEntry.title = titleEdit.text.toString().trim()
 		currentEntry.note = notesEdit.text.toString().trim()
-		Database.getInstance(this).saveLogEntry(currentEntry, { finish() })
+		Database.getInstance(this).saveLogEntry(currentEntry) { runOnUiThread { finish() } }
 	}
 
 	private fun deleteEntry() {
@@ -117,9 +117,9 @@ class EditLogEntryActivity: AppCompatActivity() {
 				.setTitle(R.string.delete_confirm_title)
 				.setMessage(R.string.delete_confirm_body)
 				.setNegativeButton(R.string.no, null)
-				.setPositiveButton(R.string.yes, { _, _ ->
-					Database.getInstance(this).deleteLogEntry(currentEntry, { onBackPressed() })
-				})
+				.setPositiveButton(R.string.yes) { _, _ ->
+					Database.getInstance(this).deleteLogEntry(currentEntry) { runOnUiThread { onBackPressed() } }
+				}
 				.create()
 				.show()
 	}

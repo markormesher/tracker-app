@@ -3,16 +3,15 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-	compileSdkVersion 27
-	buildToolsVersion '27.0.3'
+	compileSdkVersion 28
+	buildToolsVersion '28.0.3'
 
 	defaultConfig {
 		applicationId "uk.co.markormesher.tracker"
-		minSdkVersion 24
-		targetSdkVersion 27
+		minSdkVersion 28
+		targetSdkVersion 28
 		versionCode 1
 		versionName "1.0"
-		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 	}
 
 	sourceSets {
@@ -32,11 +31,11 @@ dependencies {
 
 	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 	implementation "org.jetbrains.anko:anko-commons:$anko_version"
-	implementation 'com.android.support:appcompat-v7:27.1.1'
-	implementation 'com.android.support:recyclerview-v7:27.1.1'
-	implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-	implementation 'joda-time:joda-time:2.9.9'
-	implementation 'uk.co.markormesher:android-fab:2.3.0-rc1'
+	implementation "androidx.appcompat:appcompat:1.1.0"
+	implementation "androidx.recyclerview:recyclerview:1.1.0"
+	implementation 'com.squareup.okhttp3:okhttp:4.0.0'
+	implementation 'joda-time:joda-time:2.10.1'
+	implementation 'uk.co.markormesher:android-fab:2.5.0'
 }
 
 repositories {

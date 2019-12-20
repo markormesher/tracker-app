@@ -1,9 +1,9 @@
 package uk.co.markormesher.tracker.helpers
 
 import android.content.Context
-import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import org.jetbrains.anko.defaultSharedPreferences
 import uk.co.markormesher.tracker.R
 
@@ -28,7 +28,7 @@ fun Context.promptForAccessKey(callback: (() -> Unit)? = null) {
 	builder
 			.setTitle(R.string.access_key_title)
 			.setView(input)
-			.setPositiveButton(R.string.ok, { _, _ ->
+			.setPositiveButton(R.string.ok) { _, _ ->
 				val key = input.text.toString().trim()
 				if (key.isBlank()) {
 					setAccessKey(null)
@@ -36,7 +36,7 @@ fun Context.promptForAccessKey(callback: (() -> Unit)? = null) {
 					setAccessKey(key)
 					callback?.invoke()
 				}
-			})
+			}
 			.setNegativeButton(R.string.cancel, null)
 			.create().show()
 }
